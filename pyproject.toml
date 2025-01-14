@@ -4,4 +4,17 @@ version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
-dependencies = []
+dependencies = [
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3.4",
+]
+
+[project.scripts]
+example-python-project = "example_python_project:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
