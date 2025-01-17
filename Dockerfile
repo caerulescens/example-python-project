@@ -10,7 +10,8 @@ ARG USER=appuser
 ARG USER_GID=10001
 ARG USER_UID=10001
 
-FROM python:${VERSION_PYTHON}-slim-${VERSION_DEBIAN} AS base
+# todo: use python:3.12-slim-bookworm
+FROM debian:${VERSION_DEBIAN}-slim AS base
 LABEL maintainer="caerulescens <caerulescens.github@proton.me>"
 ARG USER
 ARG USER_GID
@@ -26,6 +27,7 @@ RUN set -ex \
     && apt-get clean -y \
     && rm -rf /var/lib/apt/lists/*
 
+# todo: 'use FROM base AS builder'
 FROM ghcr.io/astral-sh/uv:python${VERSION_PYTHON}-${VERSION_DEBIAN}-slim AS builder
 ARG APP_PATH
 ENV \
@@ -34,6 +36,7 @@ ENV \
     PIP_DEFAULT_TIMEOUT=100 \
     UV_COMPILE_BYTECODE=1 \
     UV_LINK_MODE=copy
+# todo: install uv using installer
 WORKDIR ${APP_PATH}
 RUN --mount=type=cache,target=/root/.cache/uv \
     --mount=type=bind,source=uv.lock,target=uv.lock \
@@ -64,5 +67,5 @@ COPY --from=builder ${APP_PATH} ${APP_PATH}
 COPY --from=builder ${UV_TOOL_BIN_DIR} ${UV_TOOL_BIN_DIR}
 # todo: run as non-root user
 USER root
-CMD ["granian", "example_python_project.main:app"]
+CMD ["sh", "-c", "granian ${APP_NAME}.main:app"]
 EXPOSE ${APP_PORT}

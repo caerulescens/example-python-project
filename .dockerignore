@@ -1,1 +1,9 @@
+.git
+.github/
+.gitignore
 .venv/
+.idea/
+dist/
+tests/
+.pre-commit-config.yaml
+compose.yaml
