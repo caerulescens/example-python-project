@@ -27,7 +27,6 @@ RUN set -ex \
     && rm -rf /var/lib/apt/lists/*
 
 FROM ghcr.io/astral-sh/uv:python${VERSION_PYTHON}-${VERSION_DEBIAN}-slim AS builder
-ARG VERSION_UV
 ARG APP_PATH
 ENV \
     PIP_NO_CACHE_DIR=true \
@@ -50,7 +49,6 @@ ARG APP_PATH
 ARG APP_NAME
 ARG APP_HOST
 ARG APP_PORT
-ARG USER
 ENV \
     PYTHONUNBUFFERED=true \
     PYTHONDONTWRITEBYTECODE=true \
@@ -58,10 +56,13 @@ ENV \
     PYTHONHASHSEED=random \
     APP_NAME=${APP_NAME} \
     APP_HOST=${APP_HOST} \
-    APP_PORT=${APP_PORT}
+    APP_PORT=${APP_PORT} \
+    UV_TOOL_BIN_DIR=/root/.local
 ENV PATH="${APP_PATH}/.venv/bin:${PATH}"
 WORKDIR ${APP_PATH}
-COPY --from=builder --chown=${USER}:${USER} ${APP_PATH} ${APP_PATH}
-USER ${USER}
-CMD ["sh", "-c", "granian /app/src/example_python_project"]
-EXPOSE ${PORT}
+COPY --from=builder ${APP_PATH} ${APP_PATH}
+COPY --from=builder ${UV_TOOL_BIN_DIR} ${UV_TOOL_BIN_DIR}
+# todo: run as non-root user
+USER root
+CMD ["granian", "example_python_project.main:app"]
+EXPOSE ${APP_PORT}
