@@ -10,7 +10,7 @@ ARG USER=appuser
 ARG USER_GID=10001
 ARG USER_UID=10001
 
-# todo: use python:3.12-slim-bookworm
+# todo: use python:3.12-slim-bookworm or do source build
 FROM debian:${VERSION_DEBIAN}-slim AS base
 LABEL maintainer="caerulescens <caerulescens.github@proton.me>"
 ARG USER
@@ -27,7 +27,7 @@ RUN set -ex \
     && apt-get clean -y \
     && rm -rf /var/lib/apt/lists/*
 
-# todo: 'use FROM base AS builder'
+# todo: use 'FROM base AS builder'
 FROM ghcr.io/astral-sh/uv:python${VERSION_PYTHON}-${VERSION_DEBIAN}-slim AS builder
 ARG APP_PATH
 ENV \
