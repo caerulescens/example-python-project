@@ -67,5 +67,5 @@ COPY --from=builder ${APP_PATH} ${APP_PATH}
 COPY --from=builder ${UV_TOOL_BIN_DIR} ${UV_TOOL_BIN_DIR}
 # todo: run as non-root user
 USER root
-CMD ["sh", "-c", "granian ${APP_NAME}.main:app"]
+CMD ["sh", "-c", "granian --interface asgi ${APP_NAME}.main:app --host=${APP_HOST} --port=${APP_PORT}"]
 EXPOSE ${APP_PORT}
